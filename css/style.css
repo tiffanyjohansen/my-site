@@ -1065,7 +1065,7 @@ footer {
     .wx-fl6 { width: 3px; height: 3px; left: 108px; animation-delay: 0.9s; animation-duration: 4.0s; }
 
     /* ─── FOG BANDS ─── */
-    .wx-fog { height: 7px; border-radius: 4px; background: rgba(190,190,182,.7); animation: fogDrift 4s ease-in-out infinite; }
+    .wx-fogband { height: 7px; border-radius: 4px; background: rgba(190,190,182,.7); animation: fogDrift 4s ease-in-out infinite; }
     .wx-fg1 { top: 12px; left: -4px; width: 100px; animation-delay: 0s; }
     .wx-fg2 { top: 28px; left:  8px; width: 112px; animation-delay: 0.9s;  opacity: 0.82; }
     .wx-fg3 { top: 44px; left: -8px; width:  84px; animation-delay: 1.8s; }
@@ -1126,14 +1126,18 @@ footer {
 
     /* ─── RESPONSIVE ─── */
 
-    /* Tablet / large mobile: stretch full-width across the hero bottom */
+    /* Tablet / large mobile: pull cluster into normal flow so it can
+       never overlap the hero CTA buttons */
     @media (max-width: 900px) {
       .weather-cluster {
-        left: var(--pad);
-        right: var(--pad);
-        bottom: 80px;     /* sit above the scroll-hint */
+        position: static;
+        margin-top: 48px;
+        width: 100%;
         justify-content: center;
         gap: 8px;
+      }
+      .hero {
+        padding-bottom: 80px;
       }
       .weather-card {
         flex: 1;
@@ -1142,11 +1146,17 @@ footer {
       }
     }
 
-    /* Small phones: shrink scene + text so all 3 cards stay visible */
+    /* Small phones: compact cards and hide the decorative scroll hint */
     @media (max-width: 480px) {
       .weather-cluster {
-        bottom: 68px;
+        margin-top: 36px;
         gap: 6px;
+      }
+      .hero {
+        padding-bottom: 48px;
+      }
+      .scroll-hint {
+        display: none;
       }
       .weather-card {
         max-width: 108px;
