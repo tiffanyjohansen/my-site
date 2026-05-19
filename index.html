@@ -303,7 +303,43 @@
       50%     { opacity: 0.3; transform: scale(0.7); }
     }
 
-    @media (max-width: 900px) { .weather-cluster { display: none; } }
+    /* ─── RESPONSIVE ─── */
+
+    /* Tablet / large mobile: stretch full-width across the hero bottom */
+    @media (max-width: 900px) {
+      .weather-cluster {
+        left: var(--pad);
+        right: var(--pad);
+        bottom: 80px;     /* sit above the scroll-hint */
+        justify-content: center;
+        gap: 8px;
+      }
+      .weather-card {
+        flex: 1;
+        max-width: 130px;
+        width: auto;
+      }
+    }
+
+    /* Small phones: shrink scene + text so all 3 cards stay visible */
+    @media (max-width: 480px) {
+      .weather-cluster {
+        bottom: 68px;
+        gap: 6px;
+      }
+      .weather-card {
+        max-width: 108px;
+      }
+      .wx-scene {
+        height: 58px;
+      }
+      .weather-temp {
+        font-size: 1.5rem;
+      }
+      .wx-data {
+        padding: 8px 10px 10px;
+      }
+    }
   </style>
 </head>
 <body>
