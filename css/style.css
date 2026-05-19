@@ -827,3 +827,338 @@ footer {
   footer      { flex-direction: column; align-items: flex-start; gap: 12px; }
   .footer-links { gap: 20px; }
 }
+
+
+/* ---- WEATHER WIDGET ---- */
+    /* ─── WEATHER CLUSTER ─── */
+    .weather-cluster {
+      position: absolute;
+      bottom: 44px;
+      right: var(--pad);
+      display: flex;
+      gap: 10px;
+      z-index: 2;
+    }
+
+    .weather-card {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      width: 148px;
+      flex-shrink: 0;
+      overflow: hidden;
+      animation: fadeInUp 0.7s ease both;
+    }
+
+    .weather-cluster .weather-card:nth-child(1) { animation-delay: 1.20s; }
+    .weather-cluster .weather-card:nth-child(2) { animation-delay: 1.38s; }
+    .weather-cluster .weather-card:nth-child(3) { animation-delay: 1.55s; }
+
+    /* ─── SCENE ─── */
+    .wx-scene {
+      height: 76px;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(160deg, #fdf9f5 0%, #f0ece5 100%);
+      transition: background 0.8s ease;
+    }
+
+    .wx-clear         .wx-scene { background: linear-gradient(160deg, #fff8e7 0%, #ffdb6e 100%); }
+    .wx-mainly-clear  .wx-scene { background: linear-gradient(160deg, #fff8e7 0%, #dff0ff 100%); }
+    .wx-partly-cloudy .wx-scene { background: linear-gradient(160deg, #eef5ff 0%, #d4e8ff 100%); }
+    .wx-overcast      .wx-scene { background: linear-gradient(160deg, #dedede 0%, #c4c4c4 100%); }
+    .wx-fog           .wx-scene { background: linear-gradient(160deg, #e2e2da 0%, #d4d4cc 100%); }
+    .wx-drizzle       .wx-scene { background: linear-gradient(160deg, #ddeeff 0%, #c0d8f4 100%); }
+    .wx-rain          .wx-scene { background: linear-gradient(160deg, #bcd4ec 0%, #9cbcd8 100%); }
+    .wx-heavy-rain    .wx-scene { background: linear-gradient(160deg, #9cb4cc 0%, #7c9cb8 100%); }
+    .wx-snow          .wx-scene { background: linear-gradient(160deg, #eaf4ff 0%, #d2e8ff 100%); }
+    .wx-heavy-snow    .wx-scene { background: linear-gradient(160deg, #dceeff 0%, #c0dcff 100%); }
+    .wx-thunder       .wx-scene { background: linear-gradient(160deg, #565664 0%, #3c3c4a 100%); }
+    .wx-freezing      .wx-scene { background: linear-gradient(160deg, #d8ecff 0%, #c0d8f4 100%); }
+
+    /* ─── DATA AREA ─── */
+    .wx-data { padding: 10px 13px 13px; }
+
+    .weather-temp {
+      font-family: var(--font-serif);
+      font-size: 1.85rem;
+      font-weight: 400;
+      line-height: 1;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+    .weather-unit {
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      font-weight: 300;
+      color: var(--accent);
+      vertical-align: super;
+      margin-left: 1px;
+    }
+    .weather-condition {
+      font-size: 0.62rem;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .weather-location {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 0.78rem;
+      color: var(--accent);
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .weather-status {
+      font-size: 0.67rem;
+      color: var(--text-muted);
+      letter-spacing: 0.06em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      justify-content: center;
+      padding: 19px 10px;
+    }
+    .weather-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: wdot 1.4s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+
+    /* ─── ALL SCENE ELEMENTS HIDDEN BY DEFAULT ─── */
+    .wx-sun, .wx-cloud, .wx-drop,
+    .wx-flake, .wx-fog, .wx-bolt, .wx-flash {
+      display: none;
+      position: absolute;
+    }
+
+    /* ══  CLEAR ══ */
+    .wx-clear .wx-sun { display: block; }
+    .wx-sun { width: 34px; height: 34px; top: 50%; left: 50%; transform: translate(-50%,-50%); }
+    .wx-sun-core {
+      width: 22px; height: 22px; border-radius: 50%; background: #FFBF3C;
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      box-shadow: 0 0 0 4px rgba(255,191,60,.28), 0 0 0 9px rgba(255,191,60,.13), 0 0 16px 6px rgba(255,191,60,.18);
+      animation: sunGlow 2.5s ease-in-out infinite;
+    }
+    .wx-sun-ring {
+      width: 52px; height: 52px; border-radius: 50%;
+      border: 1.5px dashed rgba(255,191,60,.48);
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      animation: spinSun 10s linear infinite;
+    }
+
+    /* ══  MAINLY CLEAR ══ */
+    .wx-mainly-clear .wx-sun,
+    .wx-mainly-clear .wx-c1 { display: block; }
+    .wx-mainly-clear .wx-sun { top: 36%; left: 26%; width: 28px; height: 28px; transform: translate(-50%,-50%); }
+    .wx-mainly-clear .wx-sun .wx-sun-core { width: 18px; height: 18px; }
+    .wx-mainly-clear .wx-sun .wx-sun-ring { width: 42px; height: 42px; }
+
+    /* ══  PARTLY CLOUDY ══ */
+    .wx-partly-cloudy .wx-sun,
+    .wx-partly-cloudy .wx-c1,
+    .wx-partly-cloudy .wx-c2 { display: block; }
+    .wx-partly-cloudy .wx-sun { top: 30%; left: 24%; width: 24px; height: 24px; transform: translate(-50%,-50%); opacity: 0.8; }
+    .wx-partly-cloudy .wx-sun .wx-sun-core { width: 16px; height: 16px; }
+    .wx-partly-cloudy .wx-sun .wx-sun-ring { width: 36px; height: 36px; }
+
+    /* ══  OVERCAST ══ */
+    .wx-overcast .wx-c1,
+    .wx-overcast .wx-c2,
+    .wx-overcast .wx-c3 { display: block; background: rgba(148,150,158,.88); }
+
+    /* ══  FOG ══ */
+    .wx-fog .wx-fg1, .wx-fog .wx-fg2,
+    .wx-fog .wx-fg3, .wx-fog .wx-fg4 { display: block; }
+
+    /* ══  DRIZZLE ══ */
+    .wx-drizzle .wx-c1,
+    .wx-drizzle .wx-dr1, .wx-drizzle .wx-dr2,
+    .wx-drizzle .wx-dr3, .wx-drizzle .wx-dr4 { display: block; }
+    .wx-drizzle .wx-drop { animation-duration: 1.7s; opacity: 0.55; height: 6px; }
+
+    /* ══  RAIN ══ */
+    .wx-rain .wx-c1, .wx-rain .wx-c2,
+    .wx-rain .wx-dr1, .wx-rain .wx-dr2, .wx-rain .wx-dr3,
+    .wx-rain .wx-dr4, .wx-rain .wx-dr5, .wx-rain .wx-dr6,
+    .wx-rain .wx-dr7 { display: block; }
+
+    /* ══  HEAVY RAIN ══ */
+    .wx-heavy-rain .wx-c1, .wx-heavy-rain .wx-c2,
+    .wx-heavy-rain .wx-dr1, .wx-heavy-rain .wx-dr2, .wx-heavy-rain .wx-dr3,
+    .wx-heavy-rain .wx-dr4, .wx-heavy-rain .wx-dr5, .wx-heavy-rain .wx-dr6,
+    .wx-heavy-rain .wx-dr7, .wx-heavy-rain .wx-dr8 { display: block; }
+    .wx-heavy-rain .wx-drop { animation-duration: 0.52s; height: 11px; width: 2px; opacity: 0.88; background: rgba(70,110,180,.88); }
+
+    /* ══  SNOW ══ */
+    .wx-snow .wx-c1,
+    .wx-snow .wx-fl1, .wx-snow .wx-fl2, .wx-snow .wx-fl3,
+    .wx-snow .wx-fl4, .wx-snow .wx-fl5, .wx-snow .wx-fl6 { display: block; }
+
+    /* ══  HEAVY SNOW ══ */
+    .wx-heavy-snow .wx-c1, .wx-heavy-snow .wx-c2,
+    .wx-heavy-snow .wx-fl1, .wx-heavy-snow .wx-fl2, .wx-heavy-snow .wx-fl3,
+    .wx-heavy-snow .wx-fl4, .wx-heavy-snow .wx-fl5, .wx-heavy-snow .wx-fl6 { display: block; }
+    .wx-heavy-snow .wx-dr1,
+    .wx-heavy-snow .wx-dr2 { display: block; opacity: 0.32; animation-duration: 1.4s; height: 5px; }
+
+    /* ══  THUNDERSTORM ══ */
+    .wx-thunder .wx-c1, .wx-thunder .wx-c2,
+    .wx-thunder .wx-bolt, .wx-thunder .wx-flash,
+    .wx-thunder .wx-dr1, .wx-thunder .wx-dr2, .wx-thunder .wx-dr3 { display: block; }
+    .wx-thunder .wx-c1,
+    .wx-thunder .wx-c2 { background: rgba(58,60,72,.92); }
+    .wx-thunder .wx-drop { background: rgba(90,120,175,.7); animation-duration: 0.7s; }
+
+    /* ══  FREEZING ══ */
+    .wx-freezing .wx-c1,
+    .wx-freezing .wx-dr1, .wx-freezing .wx-dr2, .wx-freezing .wx-dr3,
+    .wx-freezing .wx-fl1, .wx-freezing .wx-fl2, .wx-freezing .wx-fl3 { display: block; }
+    .wx-freezing .wx-drop  { animation-duration: 1.1s; background: rgba(120,158,210,.7); }
+    .wx-freezing .wx-flake { animation-duration: 2.2s; background: rgba(158,196,238,.85); }
+
+    /* ─── CLOUD SHAPES ─── */
+    .wx-cloud { height: 16px; border-radius: 30px; background: rgba(234,234,234,.95); }
+    .wx-cloud::before,
+    .wx-cloud::after { content: ''; position: absolute; background: inherit; border-radius: 50%; }
+
+    .wx-c1 { width: 52px; top: 32px; left: 36px; animation: driftA 6s ease-in-out infinite; }
+    .wx-c1::before { width: 22px; height: 22px; top: -12px; left: 8px; }
+    .wx-c1::after  { width: 16px; height: 16px; top: -8px;  left: 26px; }
+
+    .wx-c2 { width: 40px; top: 12px; left: 68px; background: rgba(218,218,218,.9); animation: driftB 8s ease-in-out infinite; }
+    .wx-c2::before { width: 18px; height: 18px; top: -10px; left: 6px; }
+    .wx-c2::after  { width: 13px; height: 13px; top: -7px;  left: 20px; }
+
+    .wx-c3 { width: 58px; top: 40px; left: 12px; background: rgba(206,206,206,.95); animation: driftC 7s ease-in-out 0.8s infinite; }
+    .wx-c3::before { width: 26px; height: 26px; top: -14px; left: 10px; }
+    .wx-c3::after  { width: 18px; height: 18px; top: -10px; left: 30px; }
+
+    /* ─── RAIN DROPS ─── */
+    .wx-drop { width: 1.5px; height: 9px; background: rgba(100,148,210,.72); border-radius: 1px; top: 0; animation: fallDrop 0.9s linear infinite; }
+    .wx-dr1 { left: 16px; animation-delay: 0s; }
+    .wx-dr2 { left: 31px; animation-delay: 0.13s; }
+    .wx-dr3 { left: 50px; animation-delay: 0.28s; }
+    .wx-dr4 { left: 65px; animation-delay: 0.07s; }
+    .wx-dr5 { left: 82px; animation-delay: 0.21s; }
+    .wx-dr6 { left: 26px; animation-delay: 0.42s; }
+    .wx-dr7 { left: 57px; animation-delay: 0.36s; }
+    .wx-dr8 { left: 97px; animation-delay: 0.14s; }
+
+    /* ─── SNOWFLAKES ─── */
+    .wx-flake { border-radius: 50%; background: rgba(198,222,255,.92); top: -8px; animation: driftSnow 3s ease-in-out infinite; }
+    .wx-fl1 { width: 6px; height: 6px; left: 14px;  animation-delay: 0s;   animation-duration: 3.2s; }
+    .wx-fl2 { width: 4px; height: 4px; left: 36px;  animation-delay: 0.6s; animation-duration: 2.7s; }
+    .wx-fl3 { width: 5px; height: 5px; left: 62px;  animation-delay: 1.1s; animation-duration: 3.5s; }
+    .wx-fl4 { width: 4px; height: 4px; left: 88px;  animation-delay: 0.3s; animation-duration: 2.5s; }
+    .wx-fl5 { width: 6px; height: 6px; left: 24px;  animation-delay: 1.7s; animation-duration: 3.0s; }
+    .wx-fl6 { width: 3px; height: 3px; left: 108px; animation-delay: 0.9s; animation-duration: 4.0s; }
+
+    /* ─── FOG BANDS ─── */
+    .wx-fog { height: 7px; border-radius: 4px; background: rgba(190,190,182,.7); animation: fogDrift 4s ease-in-out infinite; }
+    .wx-fg1 { top: 12px; left: -4px; width: 100px; animation-delay: 0s; }
+    .wx-fg2 { top: 28px; left:  8px; width: 112px; animation-delay: 0.9s;  opacity: 0.82; }
+    .wx-fg3 { top: 44px; left: -8px; width:  84px; animation-delay: 1.8s; }
+    .wx-fg4 { top: 60px; left: 12px; width: 102px; animation-delay: 2.6s;  opacity: 0.74; }
+
+    /* ─── LIGHTNING ─── */
+    .wx-bolt {
+      width: 18px; height: 36px; top: 22px; left: 57px;
+      background: #FFE14D;
+      clip-path: polygon(68% 0%, 32% 48%, 58% 48%, 28% 100%, 72% 44%, 46% 44%, 78% 0%);
+      filter: drop-shadow(0 0 5px rgba(255,220,40,.9));
+      animation: lightning 3.5s ease-in-out infinite;
+    }
+    .wx-flash { top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,196,.52); animation: sceneFlash 3.5s ease-in-out infinite; }
+
+    /* ─── KEYFRAMES ─── */
+    @keyframes sunGlow {
+      0%,100% { box-shadow: 0 0 0 4px rgba(255,191,60,.28), 0 0 0 9px rgba(255,191,60,.13), 0 0 16px 6px rgba(255,191,60,.18); }
+      50%     { box-shadow: 0 0 0 7px rgba(255,191,60,.34), 0 0 0 14px rgba(255,191,60,.16), 0 0 24px 8px rgba(255,191,60,.22); }
+    }
+    @keyframes spinSun  { to { transform: translate(-50%,-50%) rotate(360deg); } }
+    @keyframes driftA   { 0%,100% { transform: translateX(0); }    50% { transform: translateX(7px);  } }
+    @keyframes driftB   { 0%,100% { transform: translateX(0); }    50% { transform: translateX(-6px); } }
+    @keyframes driftC   { 0%,100% { transform: translateX(0); }    50% { transform: translateX(9px);  } }
+    @keyframes fallDrop {
+      0%   { transform: rotate(12deg) translateY(-10px); opacity: 0; }
+      15%  { opacity: 1; }
+      85%  { opacity: 1; }
+      100% { transform: rotate(12deg) translateY(88px);  opacity: 0; }
+    }
+    @keyframes driftSnow {
+      0%   { transform: translateY(0)    translateX(0);    opacity: 0; }
+      12%  { opacity: 1; }
+      50%  { transform: translateY(40px) translateX(7px); }
+      88%  { opacity: 1; }
+      100% { transform: translateY(88px) translateX(-4px); opacity: 0; }
+    }
+    @keyframes fogDrift {
+      0%,100% { transform: translateX(0);    opacity: 0.70; }
+      50%     { transform: translateX(14px); opacity: 0.95; }
+    }
+    @keyframes lightning {
+      0%,16%,100% { opacity: 0; }
+      20%,24%     { opacity: 1; }
+      26%         { opacity: 0; }
+      29%,33%     { opacity: 0.7; }
+      35%,99%     { opacity: 0; }
+    }
+    @keyframes sceneFlash {
+      0%,18%,100% { opacity: 0; }
+      21%         { opacity: 1; }
+      24%,99%     { opacity: 0; }
+    }
+    @keyframes wdot {
+      0%,100% { opacity: 1; transform: scale(1);   }
+      50%     { opacity: 0.3; transform: scale(0.7); }
+    }
+
+    /* ─── RESPONSIVE ─── */
+
+    /* Tablet / large mobile: stretch full-width across the hero bottom */
+    @media (max-width: 900px) {
+      .weather-cluster {
+        left: var(--pad);
+        right: var(--pad);
+        bottom: 80px;     /* sit above the scroll-hint */
+        justify-content: center;
+        gap: 8px;
+      }
+      .weather-card {
+        flex: 1;
+        max-width: 130px;
+        width: auto;
+      }
+    }
+
+    /* Small phones: shrink scene + text so all 3 cards stay visible */
+    @media (max-width: 480px) {
+      .weather-cluster {
+        bottom: 68px;
+        gap: 6px;
+      }
+      .weather-card {
+        max-width: 108px;
+      }
+      .wx-scene {
+        height: 58px;
+      }
+      .weather-temp {
+        font-size: 1.5rem;
+      }
+      .wx-data {
+        padding: 8px 10px 10px;
+      }
+    }
+  
